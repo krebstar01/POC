@@ -1,0 +1,10 @@
+com/example/manager/AnalyzerManager$HtmlVersion.class
+com/example/resource/BaseApplication.class
+com/example/views/ResultsView.class
+com/example/views/ErrorView.class
+com/example/service/PageAnalyzerService.class
+com/example/views/EntryView.class
+com/example/config/GigAdminConfiguration.class
+com/example/resource/PageAnalyzerApplication.class
+com/example/manager/AnalyzerManager.class
+com/example/views/RuntimeExceptionMapper.class

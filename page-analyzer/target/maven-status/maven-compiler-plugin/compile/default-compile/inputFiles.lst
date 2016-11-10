@@ -1,0 +1,9 @@
+/home/justin/DEV/GIT_REPO/EXAMPLES/page-analyzer/src/main/java/com/example/config/GigAdminConfiguration.java
+/home/justin/DEV/GIT_REPO/EXAMPLES/page-analyzer/src/main/java/com/example/service/PageAnalyzerService.java
+/home/justin/DEV/GIT_REPO/EXAMPLES/page-analyzer/src/main/java/com/example/resource/BaseApplication.java
+/home/justin/DEV/GIT_REPO/EXAMPLES/page-analyzer/src/main/java/com/example/views/EntryView.java
+/home/justin/DEV/GIT_REPO/EXAMPLES/page-analyzer/src/main/java/com/example/views/ResultsView.java
+/home/justin/DEV/GIT_REPO/EXAMPLES/page-analyzer/src/main/java/com/example/resource/PageAnalyzerApplication.java
+/home/justin/DEV/GIT_REPO/EXAMPLES/page-analyzer/src/main/java/com/example/manager/AnalyzerManager.java
+/home/justin/DEV/GIT_REPO/EXAMPLES/page-analyzer/src/main/java/com/example/views/ErrorView.java
+/home/justin/DEV/GIT_REPO/EXAMPLES/page-analyzer/src/main/java/com/example/views/RuntimeExceptionMapper.java

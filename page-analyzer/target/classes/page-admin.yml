@@ -1,0 +1,9 @@
+server:
+  type: simple
+  rootPath: /service/*
+  applicationContextPath: /
+  adminContextPath: /page-analyzer
+  connector:
+    type: http
+    bindHost: localhost
+    port: 8004

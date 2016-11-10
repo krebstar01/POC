@@ -1,0 +1,9 @@
+server:
+  type: simple
+  rootPath: /service/*
+  applicationContextPath: /
+  adminContextPath: /watermark
+  connector:
+    type: http
+    bindHost: localhost
+    port: 8004

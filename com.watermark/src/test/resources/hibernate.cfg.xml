@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+<session-factory>
+<!-- SQL Dialect -->
+
+<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+<!--Database connection settings -->
+<property name="hbm2ddl.auto">create</property>
+<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+<property name="hibernate.connection.url">jdbc:hsqldb:mem:aname</property>
+<property name="hibernate.connection.username">sa</property>
+<property name="hibernate.connection.password"></property>
+<property name="hibernate.connection.shutdown">true</property>
+
+<!--JDBC Connection Pool (use the built in one) -->
+<property name="hibernate.connection.pool_size">1</property>
+
+<!-- Enable Hibernate's automatic session context management  -->
+<property name="current_session_context_class">thread</property>
+
+<!-- Disable the second level cache  -->
+<property name="cache_provider_class">org.hibernate.cache.NoCacheProvider</property>
+
+<!-- Disable batching so HSQLDB will propegate errors correctly  -->
+<property name="jdbc.batch_size">0</property>
+
+<!-- Echo all executed SQL to stdout -->
+<property name="show_sql">false</property>
+<property name="format_sql">false</property>
+<property name="generate_statistics">false</property>
+<property name="use_sql_comments">false</property>
+<property name="connection.provider_class">org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider</property>
+<property name="hibernate.c3p0.acquire_increment">1</property> 
+<property name="hibernate.c3p0.idle_test_period">3000</property> <!-- seconds must not be higher then c3p0.timeout!--> 
+<!-- <property name="c3p0.max_statements">50</property> -->
+<property name="hibernate.c3p0.max_statements">1000</property> 
+<property name="hibernate.c3p0.min_size">5</property>
+<property name="hibernate.c3p0.max_size">20</property>
+<property name="hibernate.c3p0.timeout">100</property> <!-- seconds -->
+<property name="temp.use_jdbc_metadata_defaults">false</property>
+<property name="hibernate.c3p0.validate">true</property>
+
+<mapping class="com.watermark.model.BaseDocument"/>
+<mapping class="com.watermark.model.Journal"/>
+<mapping class="com.watermark.model.Book"/>
+<mapping class="com.watermark.model.Watermark"/>
+
+</session-factory>
+</hibernate-configuration>
