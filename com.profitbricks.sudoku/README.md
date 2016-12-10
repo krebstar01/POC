@@ -1,12 +1,12 @@
 # I) Deliverables:
-1i) sudoku-service.jar (executable jar)
+1i) sudoku-service-demo.jar (executable jar)
 ii) sudoku.yml (needed as argument for executable jar, should be on same path)
 iii) Source Code: see enclosed zip :"Source.rar"
 iv)README.txt
 
 
 # II) How to run the service:
-java -jar sudoku-service.jar server sudoku.yml
+java -jar sudoku-service-demo.jar server sudoku.yml
 
 Please note the port used for this service to run is 8004.
 If you wish to change the port number, simply open up the YAML file: sudoku.yml
