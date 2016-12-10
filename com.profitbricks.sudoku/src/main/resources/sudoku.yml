@@ -1,0 +1,11 @@
+server:
+  type: simple
+  rootPath: /service/*
+  applicationContextPath: /
+  adminContextPath: /sudoku
+  connector:
+    type: http
+    bindHost: localhost
+    port: 8004
+swagger:
+  resourcePackage: com.sudoku.rest.resource       
