@@ -1,5 +1,8 @@
 package com.fizz.buzz.counter;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -12,35 +15,53 @@ public class FizzBuzzMain {
 	private static final String TRY_AGAIN_MSG = "End Value must be greater then Start value!  Please try again. \n";
 	private static final String DRASTICALLY_WRONG_MSG = "Something must have gone drastically wrong! Please rerun the program: java -jar FizzBuzz.jar";
 
+	
+	public static void createFile(String textTpAppend){
+		
+		PrintWriter writer;
+		try {
+			writer = new PrintWriter("FizzBuzz_Output.txt", "UTF-8");
+			writer.append(textTpAppend);
+			writer.close();
+		} catch (FileNotFoundException e) {
+			System.out.print("FizzBuzz.jar wants to create a file in the directory where it's sitting! ");
+			System.out.print("Please check to all that your Operating System will allow this action!");
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			System.out.print("FizzBuzz.jar wants to create a file formatted in UTF-8!");
+			System.out.print("Please check to all that your Operating System will support this format!");
+
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	
 	public static void printNumbers(int start, int end) {
 
+		
+		
 		String message = "";
+		
 		for (int i = start; i <= end; i++) {
 			// add count to message
-			message = i +"";
 			
 			// get modus of 5 only, if 0 show Fizz
 			//prints Text in place of number
 			if ((i % 3) == 0 && (i % 5) != 0) {
-				message = "Fizz";
+				message += "Fizz \n";
+			} else if ((i % 3) != 0 && (i % 5) == 0) {
+				message += (i + " Buzz \n");
+			} else if ((i % 3) == 0 && (i % 5) == 0) {
+				message += (i + " FizzBuzz \n");
+			} else {
+				message += (i + " \n");
 			}
-
-			// get modus of 3 only, if 0 show Buzz
-			//prints Text and number
-			if ((i % 3) != 0 && (i % 5) == 0) {
-				message += " : Buzz";
-			}
-
-			// get modus of 3 or 5, if 0 show FizzBuzz
-			//prints Text and number
-			if ((i % 3) == 0 && (i % 5) == 0) {
-				message += " : FizzBuzz";
-			}
-
-			System.out.println(message);
-			// clear text message for next loop
-			message = "";
+			
 		}
+		System.out.println(message);
+		createFile(message);
 
 	}
 
