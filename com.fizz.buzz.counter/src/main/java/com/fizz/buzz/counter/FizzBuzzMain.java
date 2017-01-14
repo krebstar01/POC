@@ -16,23 +16,29 @@ public class FizzBuzzMain {
 
 		String message = "";
 		for (int i = start; i <= end; i++) {
+			// add count to message
+			message = i +"";
+			
 			// get modus of 5 only, if 0 show Fizz
+			//prints Text in place of number
 			if ((i % 3) == 0 && (i % 5) != 0) {
-				message = " : Fizz";
+				message = "Fizz";
 			}
 
 			// get modus of 3 only, if 0 show Buzz
+			//prints Text and number
 			if ((i % 3) != 0 && (i % 5) == 0) {
-				message = " : Buzz";
+				message += " : Buzz";
 			}
 
 			// get modus of 3 or 5, if 0 show FizzBuzz
+			//prints Text and number
 			if ((i % 3) == 0 && (i % 5) == 0) {
-				message = " : FizzBuzz";
+				message += " : FizzBuzz";
 			}
 
-			System.out.println(i + message);
-			// clear text message
+			System.out.println(message);
+			// clear text message for next loop
 			message = "";
 		}
 
