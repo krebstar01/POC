@@ -26,6 +26,10 @@ import com.watermark.model.BookTopic;
 import com.watermark.model.Watermark;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ApiResponse;
 
 @Path("/status")
 @Produces(MediaType.APPLICATION_JSON)
@@ -55,12 +59,13 @@ public class WatermarkStatusApplication {
 
 	@POST
 	@Path("/requestTicket")
-	public HashMap<String, String> retrieveTicketForWatermarkRequest(@FormParam("content") String content,
-			@FormParam("title") String title, @FormParam("author") String author, @FormParam("topic") String topic) {
+	@ApiOperation(value = "method that returns a ticket number for a given set of parameters", notes = "see parameter notes for more info")
+	public HashMap<String, String> retrieveTicketForWatermarkRequest(@ApiParam(value = "content type book or journal", defaultValue="book") @FormParam("content") String content,
+			@ApiParam(value = "content title") @FormParam("title") String title, @ApiParam(value = "content author") @FormParam("author") String author, @ApiParam(value = "Book topic (optional value, for books only from one of the three topics: business, science, media)") @FormParam("topic") String topic) {
 
 		if ((content == null || content.trim().equals("")) || (title == null || title.trim().equals(""))
 				|| (author == null || author.trim().equals(""))) {
-			String message = " The following values are required in order to process a document: a) content b) title c) author";
+			String message = " The following values are required in order to process a document: a) content type (book or journal) b) title c) author";
 			message = watermarkManager.generateCustomErrorMessageBadRequest(message);
 
 			throw new WebApplicationException(
@@ -80,10 +85,14 @@ public class WatermarkStatusApplication {
 	}
 
 
+	
 	@GET
+	@ApiOperation(value = "Async Method that allows polling of watermarking status", notes = "the invoked method called by asyncResponse.resume represents a 'heavy operation' ")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Current processing status returned", response = BaseDocument.class),
+	@ApiResponse(code = 404, message = "Statistic not found"), @ApiResponse(code = 408, message = "Request Timeout") })
 	@Path("retrieveDocumentByTicketAsync/{ticketId}/{timeout}")
 	@ManagedAsync
-	public void getDocumentByTicketIdAsync(@PathParam("ticketId") String ticketId, @PathParam("timeout") Integer timeout, @Suspended final AsyncResponse asyncResponse) {
+	public void getDocumentByTicketIdAsync(@ApiParam(value = "ticket id needed to poll watermark status") @PathParam("ticketId") String ticketId, @ApiParam(defaultValue="22", value = "Configuration value for helping simulate a timout") @PathParam("timeout") Integer timeout, @Suspended final AsyncResponse asyncResponse) {
 		
 		asyncResponse.setTimeout(timeout, TimeUnit.SECONDS);
 		
@@ -104,6 +113,7 @@ public class WatermarkStatusApplication {
 	// purely for testing
 	@GET
 	@Path("retrieveAllDocuments")
+	@ApiOperation(value = "simple helper method to return all documents", notes = "This is a simple method to help with blackbox testing and evaluation ")
 	public List<BaseDocument> getAllBaseDocuments() {
 		return watermarkManager.getAllBaseDocuments();
 	}
@@ -111,6 +121,7 @@ public class WatermarkStatusApplication {
 	// purely for testing
 	@GET
 	@Path("retrieveAllWatermarks")
+	@ApiOperation(value = "simple helper method to return all watermarks", notes = "This is a simple method to help with blackbox testing and evaluation ")
 	public List<Watermark> getAllWatermarks() {
 		return watermarkManager.getAllWatermarks();
 	}

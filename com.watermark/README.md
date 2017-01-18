@@ -1,9 +1,8 @@
 # Run in Eclipse or Intellij
-#  in "Program Arguments:"
+##  in "Program Arguments:"
 ######################################################################################################
 
-import Maven project to the IDE of your choice (note: I'Ve only tried with the above two IDEs: 
-preferably "Mars" build for Eclipse or Intellij 2016.1)
+import Maven project to the IDE of your choice
 
 run the command "mvn clean install" (either in your IDE or on command line)
 
@@ -13,15 +12,75 @@ enter below in Project Properties > Run Configurations > Arguments > enter below
 server /YOUR_CHOSEN_IDE_WORKSPACE_DIRECTORY/com.watermark/src/main/resources/watermark-admin.yml
 
 /home/justin/DEV/GIT_REPO/EXAMPLES/com.watermark/target/watermark.jar
+
+# Run the shaded jar via command line
 ######################################################################################################
-# Run via command line
-######################################################################################################
+
 You should have Java 1.7 or higher correctly installed and configured on your PC!
 unzip the rar "watermark-service-test.rar"
 
 in the command line tool of choice, "cd" to the directory watermark-service-test
 run the command:
 java -jar watermark-service.jar server watermark-admin.yml
+
+
+## Data
+you will notice in the same folder where the service is running that a folder containing a file "watermark.mv.db" 
+has been created.  This is the "in file" data created by H2db.
+
+open up the page: http://localhost:8004/swagger
+here you have access to all needed webservices, via the swagger documentation UI.
+after opening the page,
+ - click on the "default" link (Show/Hide List Operations Expand Operations)
+ inspect the existing services:
+ 
+ 
+###############calling the service endpoints#############################################
+Base Context
+http://localhost:8004/service/status
+For detailed information in all service endpoints, there respective paramters and general use, please see the swagger documentation page. 
+
+POST /status/requestTicket
+to request a ticket for a book or journal, the user can post with the following parameters
+content (book OR journal)
+title (required)	
+author (required)	
+topic (optional -- book only -- from one of the three topics: business, science, media)	
+
+The user will recieve the following response after a successful post:
+
+{
+  "Ticket": "b6411eec-340d-4199-bbd3-46ea497c908e",
+  "Message": "You have requested a Book to be processed \n please check back later with the following ticket number \n /service/status/retrieveDocumentByTicket/b6411eec-340d-4199-bbd3-46ea497c908e"
+}
+
+if the user polls the retrieveAllDocuments endpoint, 
+GET /status/retrieveAllDocuments
+
+The Document will be listed with the Status of "SUBMITTED" 
+
+
+Users can then poll the retrieveDocumentByTicketAsync to get the status of there document
+
+there  are three statuses a document can have:
+SUBMITTED
+UNDERWAY
+FINISHED
+
+GET /status/retrieveDocumentByTicketAsync/{ticketId}/{timeout}
+the endpoint takes two url parameters:
+ticketId - an existing ticket identifier
+timeout - a value set for testing to "force / simulate" a time out.
+
+upon first poll, the status is listed as: UNDERWAY
+
+Upon second and final polling the state will be: FINISHED
+
+Additional endpoint for testing and reviewing data:
+GET /status/retrieveAllWatermarks
+ 
+
+OR
 
 in the rest tool/app of your choice, i.e. Google's Postman,  enter the following url: 
 http://localhost:8004/service/status/retrieveAllDocuments
@@ -31,49 +90,25 @@ http://localhost:8004/service/status/retrieveAllDocuments
 If it is already used, simply open the file "watermark-admin.yml" 
 and change the value "port:" to a valid and open port
 
-###############calling the service endpoints#############################################
-Base Context
-http://localhost:8004/service/status
-
-
-POST: http://localhost:8004/service/status/requestTicket
-GET http://localhost:8004/service/status/retrieveDocumentByTicket/{your-ticket-here}
-
-//additional services purely for testing
-GET http://localhost:8004/service/status/retrieveAllDocuments
-GET http://localhost:8004/service/status/retrieveAllWatermarks
-
 
 ###########################################notes about the service############################
 
-It should be noted that the "processing" of a document has been mocked.
-Upon receiving a ticket, a user of the service can retrieve the status of their 
-document's processing.
-
-Upon call #1: the user is notified of a status "SUBMITTED"
-Upon call #2: the user is notified of a status "UNDERWAY"
-Upon call #3: the user is notified of a status "FINISHED", and 
-the watermark has been generated
-
-The database is in memory only (no file based) so data 
-will not be persisted once the app has been shut down!
+The endpoint retrieveDocumentByTicketAsync invokes a method that takes a document through a couple of state changes.
+"Sleep" is invoked a couple of times to simulate a lengthy processing time.
+the total time for each Sleep call is 10 seconds (10000 milliseconds).
+If you set the parameter "timeout" to less then 10 seconds, you will simulate a timout, and will recieve a erroc code: 408.
 
 ###########################################about the tech stack############################
 Dropwizard (microservice)
 Hibernate 5
-HSQLDB (in memory database
+H2DB (in memory database, file mode)
+Swagger (online documentation)
 
 Testing:
 standard Junit for dao methods
 Mockito and Junit used for service tests
+Grizzly Container needed to handle async calls.
 
 ###########################################additional notes###################################
 
-Please note that the following exception takes place at start up, however is harmless.
-It is caused by a race condition between the microservice start up and hsql schema creation.
-Basically, the service starts and Hibernate tries to create an initial connection before the schema is created.
-The service is and the db are unaffected, as the service starts normally.
-##########################################################################################
-WARN  [2016-08-25 12:48:28,324] org.hibernate.tool.schema.internal.ExceptionHandlerLoggedImpl: GenerationTarget encountered exception accepting command : Error executing DDL via JDBC Statement
-! org.hsqldb.HsqlException: user lacks privilege or object not found: PUBLIC.WATERMARK
-##########################################################################################
+
