@@ -18,7 +18,7 @@ import com.watermark.model.TicketRequest;
 import com.watermark.model.Watermark;
 
 public class WatermarkManager {
-	
+
 	public WatermarkManager() {
 	}
 
@@ -33,18 +33,14 @@ public class WatermarkManager {
 		UUID ticket = UUID.randomUUID();
 		return ticket.toString();
 	}
-	
-	
-	public List<BaseDocument> getAllBaseDocuments(){
+
+	public List<BaseDocument> getAllBaseDocuments() {
 		return watermarkDao.getAllBaseDocuments();
 	}
-	
-	
-	public List<Watermark> getAllWatermarks(){
+
+	public List<Watermark> getAllWatermarks() {
 		return watermarkDao.getAllWatermarks();
 	}
-
-	
 
 	public HashMap<String, String> retrieveTicketForWatermarkRequest(String content, String title, String author,
 			BookTopic topic) {
@@ -89,15 +85,50 @@ public class WatermarkManager {
 		return results;
 	}
 
-	// here we create a mock watermark process
-	public BaseDocument processDocument(BaseDocument docForProcessing) {
+//	// here we create a mock watermark process
+//	public BaseDocument processDocument(BaseDocument docForProcessing) {
+//		if (docForProcessing != null) {
+//			ProcessingStatus status = docForProcessing.getProcessingStatus();
+//
+//			if (status == ProcessingStatus.SUBMITTED) {
+//				docForProcessing.setProcessingStatus(ProcessingStatus.UNDERWAY);
+//			}
+//
+//			if (status == ProcessingStatus.UNDERWAY) {
+//				docForProcessing.setProcessingStatus(ProcessingStatus.FINISHED);
+//				Watermark watermark = new Watermark();
+//
+//				watermark.setContent(docForProcessing.getContent());
+//				watermark.setTitle(docForProcessing.getTitle());
+//				watermark.setAuthor(docForProcessing.getAuthor());
+//
+//				if (docForProcessing instanceof Book) {
+//					Book book = (Book) docForProcessing;
+//					watermark.setBookTopic(book.getTopic());
+//				}
+//
+//				docForProcessing.setWatermark(watermark);
+//				watermark.setBaseDocument(docForProcessing);
+//			}
+//
+//			docForProcessing = watermarkDao.updateDocument(docForProcessing);
+//
+//		}
+//
+//		return docForProcessing;
+//	}
+
+	public BaseDocument processDocumentTimed(BaseDocument docForProcessing) throws InterruptedException {
 		if (docForProcessing != null) {
 			ProcessingStatus status = docForProcessing.getProcessingStatus();
-
+			
+			Thread.sleep(10000);
+			
 			if (status == ProcessingStatus.SUBMITTED) {
 				docForProcessing.setProcessingStatus(ProcessingStatus.UNDERWAY);
 			}
-
+			
+			Thread.sleep(10000);
 			 if (status == ProcessingStatus.UNDERWAY) {
 				docForProcessing.setProcessingStatus(ProcessingStatus.FINISHED);
 					Watermark watermark = new Watermark();
@@ -128,38 +159,42 @@ public class WatermarkManager {
 		BaseDocument results = null;
 
 		BaseDocument foundDocument = watermarkDao.fetchBaseDocumentByTicketId(ticketId);
-		
 
 		if (foundDocument != null) {
-				results = new TicketRequest();
-				results.setId(foundDocument.getId());
-				results.setTicketId(foundDocument.getTicketId());
-				results.setProcessingStatus(foundDocument.getProcessingStatus());
-				
-				if(foundDocument.getWatermark()!=null){
-					results.setWatermark(foundDocument.getWatermark());
-				}
-				processDocument(foundDocument);
-		}
-		
-		if(foundDocument==null) {
-            String message = "The document you have requested with ticketId: "+ticketId+" does not exist.";
-            message = generateCustomErrorMessageBadRequest(message);
-            throw new WebApplicationException(Response.status(Status.BAD_REQUEST)
-                    .entity(message).build());
+			results = new TicketRequest();
+			results.setId(foundDocument.getId());
+			results.setTicketId(foundDocument.getTicketId());
+			results.setProcessingStatus(foundDocument.getProcessingStatus());
+
+			if (foundDocument.getWatermark() != null) {
+				results.setWatermark(foundDocument.getWatermark());
+			}
+			try {
+				processDocumentTimed(foundDocument);
+			} catch (InterruptedException e) {
+				String message = "The document you have requested with ticketId: " + ticketId + " does not exist OR could not be processed.";
+				message = generateCustomErrorMessageBadRequest(message);
+				throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(message).build());
+
+			}
 		}
 
+		if (foundDocument == null) {
+			String message = "The document you have requested with ticketId: " + ticketId + " does not exist OR could not be processed.";
+			message = generateCustomErrorMessageBadRequest(message);
+			throw new NullPointerException("NULLLLL >>>>>>>>>>>>>>>>>>>><<<< for " + ticketId);
+			//throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(message).build());
+		}
 
 		return results;
 	}
-	
-	public String generateCustomErrorMessageBadRequest(String message){
+
+	public String generateCustomErrorMessageBadRequest(String message) {
 		String result = "{";
 		result += "\"status\" : " + "\"" + Status.BAD_REQUEST + "\"";
 		result += ",\"status code\" : " + "\"" + Status.BAD_REQUEST.getStatusCode() + "\"";
 		result += ",\"message\" : ";
-		result +="\"" + message + "\""
-        		+ "}";
+		result += "\"" + message + "\"" + "}";
 		return result;
 	}
 

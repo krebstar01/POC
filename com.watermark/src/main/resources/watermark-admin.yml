@@ -1,3 +1,21 @@
+database:
+    driverClass: com.mysql.jdbc.Driver
+    user: "sa"
+    password:
+    url: jdbc:h2:file:./data/watermark
+    driverClass: org.h2.Driver
+    properties:
+      charSet: UTF-8
+      maxWaitForConnection: 15s
+      validationQuery: "/* Watermark Service Health Check */ SELECT 1"
+      minSize: 8
+      maxSize: 32
+      checkConnectionWhileIdle: false
+      checkConnectionHealthWhenIdleFor: 10s
+      closeConnectionIfIdleFor: 1 minute
+      initialPoolSize: 2
+      hibernate.hbm2ddl.auto: update
+      hibernate.dialect: org.hibernate.dialect.H2Dialect
 server:
   type: simple
   rootPath: /service/*
@@ -7,3 +25,5 @@ server:
     type: http
     bindHost: localhost
     port: 8004
+swagger:
+  resourcePackage: com.watermark.rest.resource    
