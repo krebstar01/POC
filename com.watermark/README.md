@@ -21,6 +21,7 @@ unzip the rar "watermark-service-test.rar"
 
 in the command line tool of choice, "cd" to the directory watermark-service-test
 run the command:
+
 java -jar watermark-service.jar server watermark-admin.yml
 
 
@@ -29,11 +30,12 @@ you will notice in the same folder where the service is running that a folder co
 has been created.  This is the "in file" data created by H2db.
 
 open up the page: http://localhost:8004/swagger
+
 here you have access to all needed webservices, via the swagger documentation UI.
+
 after opening the page,
  - click on the "default" link (Show/Hide List Operations Expand Operations)
- inspect the existing services:
- 
+ inspect the existing services (see below)
  
 ###############calling the service endpoints#############################################
 Base Context
@@ -53,16 +55,13 @@ The user will recieve the following response after a successful post:
   "Ticket": "b6411eec-340d-4199-bbd3-46ea497c908e",
   "Message": "You have requested a Book to be processed \n please check back later with the following ticket number \n /service/status/retrieveDocumentByTicket/b6411eec-340d-4199-bbd3-46ea497c908e"
 }
-
-if the user polls the retrieveAllDocuments endpoint, 
+ 
 GET /status/retrieveAllDocuments
-
-The Document will be listed with the Status of "SUBMITTED" 
-
+if the user polls the retrieveAllDocuments endpoint, the newly created document will be listed with the Status of "SUBMITTED" 
 
 Users can then poll the retrieveDocumentByTicketAsync to get the status of there document
+There  are three statuses a document can have:
 
-there  are three statuses a document can have:
 SUBMITTED
 UNDERWAY
 FINISHED
@@ -78,7 +77,6 @@ Upon second and final polling the state will be: FINISHED
 
 Additional endpoint for testing and reviewing data:
 GET /status/retrieveAllWatermarks
- 
 
 OR
 
@@ -107,8 +105,8 @@ Swagger (online documentation)
 Testing:
 standard Junit for dao methods
 Mockito and Junit used for service tests
-Grizzly Container needed to handle async calls.
+Grizzly Container needed to handle service async calls.
 
-###########################################additional notes###################################
+###########################################additional notes#################################
 
 

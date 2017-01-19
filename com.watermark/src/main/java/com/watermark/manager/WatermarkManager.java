@@ -42,6 +42,15 @@ public class WatermarkManager {
 		return watermarkDao.getAllWatermarks();
 	}
 
+	/**
+	 * @return HashMap<String, String>
+	 * @param String content 
+	 * @param String title
+	 * @param String author
+	 * @param BookTopic topic
+	 * 
+	 * returns HashMap which when serialized offers json values: a) ticket id (for polling)  and b) message  
+	 * */
 	public HashMap<String, String> retrieveTicketForWatermarkRequest(String content, String title, String author,
 			BookTopic topic) {
 
@@ -85,40 +94,15 @@ public class WatermarkManager {
 		return results;
 	}
 
-//	// here we create a mock watermark process
-//	public BaseDocument processDocument(BaseDocument docForProcessing) {
-//		if (docForProcessing != null) {
-//			ProcessingStatus status = docForProcessing.getProcessingStatus();
-//
-//			if (status == ProcessingStatus.SUBMITTED) {
-//				docForProcessing.setProcessingStatus(ProcessingStatus.UNDERWAY);
-//			}
-//
-//			if (status == ProcessingStatus.UNDERWAY) {
-//				docForProcessing.setProcessingStatus(ProcessingStatus.FINISHED);
-//				Watermark watermark = new Watermark();
-//
-//				watermark.setContent(docForProcessing.getContent());
-//				watermark.setTitle(docForProcessing.getTitle());
-//				watermark.setAuthor(docForProcessing.getAuthor());
-//
-//				if (docForProcessing instanceof Book) {
-//					Book book = (Book) docForProcessing;
-//					watermark.setBookTopic(book.getTopic());
-//				}
-//
-//				docForProcessing.setWatermark(watermark);
-//				watermark.setBaseDocument(docForProcessing);
-//			}
-//
-//			docForProcessing = watermarkDao.updateDocument(docForProcessing);
-//
-//		}
-//
-//		return docForProcessing;
-//	}
-
-	public BaseDocument processDocumentTimed(BaseDocument docForProcessing) throws InterruptedException {
+	
+	/**
+	 * @return BaseDocument
+	 * @param BaseDocument docForProcessing
+	 * 
+	 * "costly" processing method that processes a BaseDocument, changing its status through to completion
+	 *  
+	 * */
+	protected BaseDocument processDocumentTimed(BaseDocument docForProcessing) throws InterruptedException {
 		if (docForProcessing != null) {
 			ProcessingStatus status = docForProcessing.getProcessingStatus();
 			
@@ -129,6 +113,7 @@ public class WatermarkManager {
 			}
 			
 			Thread.sleep(10000);
+			
 			 if (status == ProcessingStatus.UNDERWAY) {
 				docForProcessing.setProcessingStatus(ProcessingStatus.FINISHED);
 					Watermark watermark = new Watermark();
@@ -146,7 +131,6 @@ public class WatermarkManager {
 					docForProcessing.setWatermark(watermark);
 					watermark.setBaseDocument(docForProcessing);
 			}
-
 					
 			 docForProcessing = watermarkDao.updateDocument(docForProcessing);			
 
@@ -155,6 +139,16 @@ public class WatermarkManager {
 		return docForProcessing;
 	}
 
+	
+	/**
+	 * @return BaseDocument
+	 * @param String ticketId
+	 * 
+	 * - fetches BaseDocument 
+	 * - invokes processDocumentTimed 
+	 * - this method should be invoked by service method
+	 *  @throws WebApplicationException (BAD_REQUEST -- 400)
+	 * */
 	public BaseDocument fetchBaseDocumentByTicketId(String ticketId) {
 		BaseDocument results = null;
 
@@ -175,15 +169,13 @@ public class WatermarkManager {
 				String message = "The document you have requested with ticketId: " + ticketId + " does not exist OR could not be processed.";
 				message = generateCustomErrorMessageBadRequest(message);
 				throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(message).build());
-
 			}
 		}
 
 		if (foundDocument == null) {
 			String message = "The document you have requested with ticketId: " + ticketId + " does not exist OR could not be processed.";
 			message = generateCustomErrorMessageBadRequest(message);
-			throw new NullPointerException("NULLLLL >>>>>>>>>>>>>>>>>>>><<<< for " + ticketId);
-			//throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(message).build());
+			throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(message).build());
 		}
 
 		return results;

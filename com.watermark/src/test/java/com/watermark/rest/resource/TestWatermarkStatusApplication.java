@@ -92,10 +92,11 @@ public class TestWatermarkStatusApplication {
 		when(watermarkManager.getAllWatermarks()).thenReturn(watermarks);
 	}
 
+	
 	@Test
 	public void testRetrieveDocumentByTicket() {
 		Client client = resources.client();
-		WebTarget target = client.target(dropwizard.baseUri()+"/status/retrieveDocumentByTicketAsync/111/2");
+		WebTarget target = client.target(dropwizard.baseUri()+"/status/retrieveDocumentByTicketAsync/111/22");
 		Integer actual = target.request(MediaType.APPLICATION_JSON).get().getStatus();
 		assertThat(actual).isEqualTo(200);
 	}
