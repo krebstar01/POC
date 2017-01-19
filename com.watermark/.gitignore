@@ -1,4 +1,4 @@
 /target/
-com.watermark/data/*
-com.watermark/data/watermark.mv.db
-com.watermark/.classpath
+data/*
+data/watermark.mv.db
+.classpath
