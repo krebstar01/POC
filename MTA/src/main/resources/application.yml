@@ -1,0 +1,42 @@
+spring:
+#  profiles:
+#    active: dev
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  datasource:
+    # url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:mysql://localhost:3306/servermail
+    #url: jdbc:mysql://mta_db_container:3306/servermail
+    username: usermail
+    password: mailpassword
+    driver-class-name: com.mysql.jdbc.Driver
+    platform: mysql
+    show-sql: true
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    database: MYSQL
+    openvInView: false
+    show_sql: true
+    generate-ddl: true
+    hibernate:
+      use-new-id-generator-mappings: true
+      ddl-auto: update
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQLDialect
+server:
+    context-path: /api
+    port: 8081
+com:
+    sample:
+        global:
+          debug: true
+logging:
+  file: ./logs/springboot.log
+  # default level is INFO
+  level:
+    ROOT: debug
+    org.springframework: debug
+    org.springframework.scheduling: info
